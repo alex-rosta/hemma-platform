@@ -1,0 +1,51 @@
+# Host-backed storage for critical persistent data
+# Data is stored at /mnt/data/<app> on the k3s node
+# Ensure these directories exist before deploying
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: host-data
+provisioner: kubernetes.io/no-provisioner
+volumeBindingMode: WaitForFirstConsumer
+reclaimPolicy: Retain
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: openbao-data
+  labels:
+    app: openbao
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: host-data
+  hostPath:
+    path: /mnt/data/openbao
+    type: DirectoryOrCreate
+  claimRef:
+    namespace: openbao
+    name: data-openbao-0
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: keycloak-postgresql-data
+  labels:
+    app: keycloak-postgresql
+spec:
+  capacity:
+    storage: 2Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: host-data
+  hostPath:
+    path: /mnt/data/keycloak-postgresql
+    type: DirectoryOrCreate
+  claimRef:
+    namespace: keycloak
+    name: data-keycloak-postgresql-0

@@ -1,0 +1,66 @@
+# Traefik - managed by ArgoCD (k3s default traefik must be disabled)
+deployment:
+  replicas: 1
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    memory: 256Mi
+
+ingressClass:
+  enabled: true
+  isDefaultClass: true
+
+# Dashboard available via: kubectl port-forward -n traefik svc/traefik 9000:9000
+ingressRoute:
+  dashboard:
+    enabled: false
+
+ports:
+  web:
+    redirections:
+      entryPoint:
+        to: websecure
+        scheme: https
+  websecure:
+    tls:
+      enabled: true
+
+# Prometheus metrics
+metrics:
+  prometheus:
+    entryPoint: metrics
+    service:
+      enabled: true
+    serviceMonitor:
+      enabled: true
+
+# Use cert-manager for default TLS
+tlsStore:
+  default:
+    defaultCertificate:
+      secretName: traefik-default-tls
+
+# Wildcard TLS certificate via Let's Encrypt + Cloudflare DNS-01
+extraObjects:
+  - apiVersion: cert-manager.io/v1
+    kind: Certificate
+    metadata:
+      name: traefik-default-tls
+      namespace: traefik
+    spec:
+      secretName: traefik-default-tls
+      dnsNames:
+        - "*.rosta.dev"
+        - "rosta.dev"
+      issuerRef:
+        name: letsencrypt-prod
+        kind: ClusterIssuer
+
+logs:
+  general:
+    level: INFO
+  access:
+    enabled: true

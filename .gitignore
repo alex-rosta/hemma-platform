@@ -1,0 +1,19 @@
+# Secrets
+*.key
+*.pem
+credentials.json
+tunnel-credentials.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.idea/
+*.swp
+*.swo
+*~
+
+# Helm
+charts/
+*.tgz

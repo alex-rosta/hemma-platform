@@ -1,0 +1,54 @@
+# Plain manifest applications (no Helm)
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: manifest-apps
+  namespace: argocd
+spec:
+  goTemplate: true
+  generators:
+    - list:
+        elements:
+          - name: storage
+            namespace: default
+            path: platform/storage
+
+          - name: cert-manager-resources
+            namespace: cert-manager
+            path: platform/cert-manager/resources
+
+          - name: external-secrets-resources
+            namespace: external-secrets
+            path: platform/external-secrets/resources
+
+          - name: cloudflared
+            namespace: cloudflared
+            path: platform/cloudflared
+  template:
+    metadata:
+      name: "{{ .name }}"
+      namespace: argocd
+      finalizers:
+        - resources-finalizer.argocd.argoproj.io
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/alex-rosta/hemma-platform.git
+        targetRevision: main
+        path: "{{ .path }}"
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: "{{ .namespace }}"
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+          - ServerSideApply=true
+        retry:
+          limit: 3
+          backoff:
+            duration: 5s
+            factor: 2
+            maxDuration: 3m0s

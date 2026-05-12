@@ -1,0 +1,69 @@
+# ArgoCD - single node homelab config
+global:
+  domain: argocd.rosta.dev
+
+# Single-node: disable HA
+redis-ha:
+  enabled: false
+
+controller:
+  replicas: 1
+  resources:
+    requests:
+      cpu: 250m
+      memory: 256Mi
+    limits:
+      memory: 512Mi
+
+server:
+  replicas: 1
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      memory: 256Mi
+  ingress:
+    enabled: true
+    ingressClassName: traefik
+    tls: true
+
+repoServer:
+  replicas: 1
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      memory: 512Mi
+
+applicationSet:
+  replicas: 1
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      memory: 256Mi
+
+notifications:
+  enabled: false
+
+dex:
+  enabled: false
+
+configs:
+  params:
+    server.insecure: true
+  cm:
+    url: https://argocd.rosta.dev
+    # Uncomment to integrate with Keycloak OIDC
+    # oidc.config: |
+    #   name: Keycloak
+    #   issuer: https://keycloak.rosta.dev/realms/hemma
+    #   clientID: argocd
+    #   clientSecret: $oidc.keycloak.clientSecret
+    #   requestedScopes:
+    #     - openid
+    #     - profile
+    #     - email

@@ -1,0 +1,61 @@
+# Keycloak (Bitnami) - single node
+replicaCount: 1
+
+auth:
+  adminUser: admin
+  # Password injected via ExternalSecret -> openbao secret/hemma/keycloak
+  existingSecret: keycloak-admin-password
+  passwordSecretKey: password
+
+resources:
+  requests:
+    cpu: 250m
+    memory: 512Mi
+  limits:
+    memory: 1Gi
+
+# Use embedded PostgreSQL for simplicity
+postgresql:
+  enabled: true
+  auth:
+    existingSecret: keycloak-postgresql-password
+  primary:
+    persistence:
+      enabled: true
+      size: 2Gi
+      storageClass: host-data
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        memory: 256Mi
+
+production: true
+
+proxy: edge
+
+extraEnvVars:
+  - name: KC_HOSTNAME
+    value: idp.rosta.dev
+  - name: KC_HOSTNAME_ADMIN
+    value: idp-admin.rosta.dev
+
+ingress:
+  enabled: true
+  ingressClassName: traefik
+  hostname: idp.rosta.dev
+  extraHosts:
+    - name: idp-admin.rosta.dev
+  tls: true
+
+# Health & readiness
+readinessProbe:
+  enabled: true
+livenessProbe:
+  enabled: true
+
+metrics:
+  enabled: true
+  serviceMonitor:
+    enabled: true

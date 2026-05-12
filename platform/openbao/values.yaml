@@ -1,0 +1,48 @@
+# OpenBao - standalone mode for single-node homelab
+server:
+  standalone:
+    enabled: true
+    config: |
+      ui = true
+      listener "tcp" {
+        tls_disable = 1
+        address = "[::]:8200"
+        cluster_address = "[::]:8201"
+      }
+      storage "file" {
+        path = "/openbao/data"
+      }
+
+  dataStorage:
+    enabled: true
+    size: 1Gi
+    storageClass: host-data
+
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      memory: 256Mi
+
+  ingress:
+    enabled: true
+    ingressClassName: traefik
+    hosts:
+      - host: bao.rosta.dev
+        paths:
+          - /
+    tls:
+      - hosts:
+          - bao.rosta.dev
+
+  # HA disabled for single node
+  ha:
+    enabled: false
+
+ui:
+  enabled: true
+  serviceType: ClusterIP
+
+injector:
+  enabled: false

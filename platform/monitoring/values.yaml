@@ -1,0 +1,157 @@
+# kube-prometheus-stack - single node homelab
+# Includes: Prometheus, Grafana, Alertmanager, node-exporter, kube-state-metrics
+
+prometheus:
+  prometheusSpec:
+    replicas: 1
+    retention: 7d
+    retentionSize: 5GB
+    resources:
+      requests:
+        cpu: 200m
+        memory: 512Mi
+      limits:
+        memory: 2Gi
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: local-path
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 10Gi
+    # Scrape all ServiceMonitors across namespaces
+    serviceMonitorSelectorNilUsesHelmValues: false
+    podMonitorSelectorNilUsesHelmValues: false
+    ruleSelectorNilUsesHelmValues: false
+
+alertmanager:
+  alertmanagerSpec:
+    replicas: 1
+    resources:
+      requests:
+        cpu: 25m
+        memory: 32Mi
+      limits:
+        memory: 64Mi
+    storage:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: local-path
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 1Gi
+
+grafana:
+  replicas: 1
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      memory: 256Mi
+  persistence:
+    enabled: true
+    size: 2Gi
+    storageClassName: local-path
+  ingress:
+    enabled: true
+    ingressClassName: traefik
+    hosts:
+      - grafana.rosta.dev
+    tls:
+      - hosts:
+          - grafana.rosta.dev
+  # Admin password injected via ExternalSecret -> openbao secret/hemma/grafana
+  adminUser: admin
+  admin:
+    existingSecret: grafana-admin-password
+    userKey: user
+    passwordKey: password
+  sidecar:
+    dashboards:
+      enabled: true
+      searchNamespace: ALL
+    datasources:
+      enabled: true
+  dashboardProviders:
+    dashboardproviders.yaml:
+      apiVersion: 1
+      providers:
+        - name: grafana-dashboards
+          orgId: 1
+          folder: ""
+          type: file
+          disableDeletion: false
+          editable: true
+          options:
+            path: /var/lib/grafana/dashboards/grafana-dashboards
+  dashboards:
+    grafana-dashboards:
+      # K3s / Kubernetes cluster overview
+      k8s-cluster:
+        gnetId: 7249
+        revision: 1
+        datasource: Prometheus
+      # Node Exporter
+      node-exporter:
+        gnetId: 1860
+        revision: 37
+        datasource: Prometheus
+      # Traefik
+      traefik:
+        gnetId: 17346
+        revision: 9
+        datasource: Prometheus
+      # cert-manager
+      cert-manager:
+        gnetId: 20842
+        revision: 3
+        datasource: Prometheus
+      # Keycloak
+      keycloak:
+        gnetId: 19659
+        revision: 1
+        datasource: Prometheus
+
+  # Uncomment for Keycloak OIDC integration
+  # grafana.ini:
+  #   auth.generic_oauth:
+  #     enabled: true
+  #     name: Keycloak
+  #     allow_sign_up: true
+  #     client_id: grafana
+  #     client_secret: ${GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET}
+  #     scopes: openid profile email
+  #     auth_url: https://keycloak.rosta.dev/realms/hemma/protocol/openid-connect/auth
+  #     token_url: https://keycloak.rosta.dev/realms/hemma/protocol/openid-connect/token
+  #     api_url: https://keycloak.rosta.dev/realms/hemma/protocol/openid-connect/userinfo
+
+nodeExporter:
+  resources:
+    requests:
+      cpu: 25m
+      memory: 32Mi
+    limits:
+      memory: 64Mi
+
+kubeStateMetrics:
+  resources:
+    requests:
+      cpu: 25m
+      memory: 32Mi
+    limits:
+      memory: 64Mi
+
+# Disable components not needed on single-node k3s
+kubeEtcd:
+  enabled: false
+kubeProxy:
+  enabled: false
+kubeScheduler:
+  enabled: false
+kubeControllerManager:
+  enabled: false
