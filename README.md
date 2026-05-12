@@ -84,6 +84,18 @@ Create a tunnel in the [Cloudflare dashboard](https://one.dash.cloudflare.com/) 
 
 **Plain manifests** — add an entry to `apps/manifest-apps.yaml` and create `platform/<name>/` with your YAML files.
 
+## Reset
+
+To wipe the cluster and start fresh:
+
+```bash
+/usr/local/bin/k3s-uninstall.sh
+sudo rm -rf /mnt/data/openbao /mnt/data/keycloak-postgresql
+sudo mkdir -p /mnt/data/openbao /mnt/data/keycloak-postgresql
+```
+
+Then reinstall k3s (`--disable traefik`) and re-run the bootstrap.
+
 ## Structure
 
 ```

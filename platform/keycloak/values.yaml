@@ -24,6 +24,12 @@ postgresql:
       enabled: true
       size: 2Gi
       storageClass: host-data
+    podSecurityContext:
+      fsGroup: 1001
+    containerSecurityContext:
+      runAsUser: 1001
+      runAsNonRoot: true
+      allowPrivilegeEscalation: false
     resources:
       requests:
         cpu: 100m
