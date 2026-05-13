@@ -17,15 +17,6 @@ server:
     size: 1Gi
     storageClass: local-path
 
-  securityContext:
-    pod:
-      fsGroup: 1000
-      runAsNonRoot: true
-    container:
-      runAsUser: 100
-      runAsNonRoot: true
-      allowPrivilegeEscalation: false
-
   resources:
     requests:
       cpu: 100m
@@ -44,7 +35,6 @@ server:
       - hosts:
           - bao.rosta.dev
 
-  # HA disabled for single node
   ha:
     enabled: false
 

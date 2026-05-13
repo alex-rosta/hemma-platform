@@ -12,7 +12,6 @@ resources:
   limits:
     memory: 1Gi
 
-# Use embedded PostgreSQL for simplicity
 postgresql:
   enabled: true
   auth:
@@ -22,12 +21,6 @@ postgresql:
       enabled: true
       size: 2Gi
       storageClass: local-path
-    podSecurityContext:
-      fsGroup: 1001
-    containerSecurityContext:
-      runAsUser: 1001
-      runAsNonRoot: true
-      allowPrivilegeEscalation: false
     resources:
       requests:
         cpu: 100m
@@ -53,7 +46,6 @@ ingress:
     - name: idp-admin.rosta.dev
   tls: true
 
-# Health & readiness
 readinessProbe:
   enabled: true
 livenessProbe:
