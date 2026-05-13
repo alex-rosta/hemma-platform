@@ -1,6 +1,3 @@
-# kube-prometheus-stack - single node homelab
-# Includes: Prometheus, Grafana, Alertmanager, node-exporter, kube-state-metrics
-
 prometheus:
   prometheusSpec:
     replicas: 1
@@ -21,7 +18,6 @@ prometheus:
           resources:
             requests:
               storage: 10Gi
-    # Scrape all ServiceMonitors across namespaces
     serviceMonitorSelectorNilUsesHelmValues: false
     podMonitorSelectorNilUsesHelmValues: false
     ruleSelectorNilUsesHelmValues: false
@@ -65,7 +61,6 @@ grafana:
     tls:
       - hosts:
           - grafana.rosta.dev
-  # Admin password injected via ExternalSecret -> openbao secret/hemma/grafana
   adminUser: admin
   admin:
     existingSecret: grafana-admin-password
@@ -117,7 +112,6 @@ grafana:
         revision: 1
         datasource: Prometheus
 
-  # Uncomment for Keycloak OIDC integration
   # grafana.ini:
   #   auth.generic_oauth:
   #     enabled: true
@@ -126,9 +120,9 @@ grafana:
   #     client_id: grafana
   #     client_secret: ${GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET}
   #     scopes: openid profile email
-  #     auth_url: https://keycloak.rosta.dev/realms/hemma/protocol/openid-connect/auth
-  #     token_url: https://keycloak.rosta.dev/realms/hemma/protocol/openid-connect/token
-  #     api_url: https://keycloak.rosta.dev/realms/hemma/protocol/openid-connect/userinfo
+  #     auth_url: https://idp.rosta.dev/realms/hemma/protocol/openid-connect/auth
+  #     token_url: https://idp.rosta.dev/realms/hemma/protocol/openid-connect/token
+  #     api_url: https://idp.rosta.dev/realms/hemma/protocol/openid-connect/userinfo
 
 nodeExporter:
   resources:

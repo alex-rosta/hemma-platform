@@ -57,10 +57,9 @@ configs:
     server.insecure: true
   cm:
     url: https://argocd.rosta.dev
-    # Uncomment to integrate with Keycloak OIDC
     # oidc.config: |
     #   name: Keycloak
-    #   issuer: https://keycloak.rosta.dev/realms/hemma
+    #   issuer: https://idp.rosta.dev/realms/hemma
     #   clientID: argocd
     #   clientSecret: $oidc.keycloak.clientSecret
     #   requestedScopes:
