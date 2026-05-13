@@ -9,10 +9,6 @@ spec:
   generators:
     - list:
         elements:
-          - name: storage
-            namespace: default
-            path: platform/storage
-
           - name: cert-manager-resources
             namespace: cert-manager
             path: platform/cert-manager/resources

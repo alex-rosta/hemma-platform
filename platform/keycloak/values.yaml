@@ -1,9 +1,7 @@
-# Keycloak (Bitnami) - single node
 replicaCount: 1
 
 auth:
   adminUser: admin
-  # Password injected via ExternalSecret -> openbao secret/hemma/keycloak
   existingSecret: keycloak-admin-password
   passwordSecretKey: password
 
@@ -23,7 +21,7 @@ postgresql:
     persistence:
       enabled: true
       size: 2Gi
-      storageClass: host-data
+      storageClass: local-path
     podSecurityContext:
       fsGroup: 1001
     containerSecurityContext:

@@ -1,4 +1,3 @@
-# OpenBao - standalone mode for single-node homelab
 server:
   standalone:
     enabled: true
@@ -16,7 +15,7 @@ server:
   dataStorage:
     enabled: true
     size: 1Gi
-    storageClass: host-data
+    storageClass: local-path
 
   securityContext:
     pod:

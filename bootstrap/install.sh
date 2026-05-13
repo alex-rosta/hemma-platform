@@ -7,7 +7,6 @@ set -euo pipefail
 #
 # Prerequisites:
 #   - k3s running with: --disable traefik
-#   - /mnt/data/openbao and /mnt/data/keycloak-postgresql directories exist on the node
 #   - helm and kubectl installed on this machine
 #   - kubeconfig pointing at the cluster
 

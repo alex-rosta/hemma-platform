@@ -7,10 +7,6 @@ GitOps homelab on single node k3s, managed by ArgoCD.
 - k3s with default Traefik disabled (`--disable traefik`)
 - `kubectl` and `helm` installed
 - Cloudflare account with domain and API token for DNS-01 challenge
-- Persistent data directories:
-  ```bash
-  sudo mkdir -p /mnt/data/openbao /mnt/data/keycloak-postgresql
-  ```
 
 ## Bootstrap
 
@@ -90,8 +86,6 @@ To wipe the cluster and start fresh:
 
 ```bash
 /usr/local/bin/k3s-uninstall.sh
-sudo rm -rf /mnt/data/openbao /mnt/data/keycloak-postgresql
-sudo mkdir -p /mnt/data/openbao /mnt/data/keycloak-postgresql
 ```
 
 Then reinstall k3s (`--disable traefik`) and re-run the bootstrap.
